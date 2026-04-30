@@ -46,11 +46,32 @@ elif len(NACA)==5:
     S=int(NACA[2])
     t=(int(NACA[3]+NACA[4]))/100
 
-    f=lambda r: r*(1-(r/3)**2)-P
-    r=mp.findroot(f,3)
-    N=(3*r-7*(r**2)+8*(r**3)-4*(r**4))/((r-(r**2))**0.5)-(3/2)*(1-2*r)*(((np.pi)/2)-np.arcsin(1-2*r))
+    yt = 5 * t * (0.2969 * np.sqrt(x)- 0.1260 * x - 0.3516 * x**2 + 0.2843 * x**3 - 0.1015 * x**4)
+    f=lambda r: r*(1-((r/3)**(1/2)))-P
+    r=float(mp.findroot(f,0.2))
+    temp=(1-2*r)
+    N=(3*r-7*(r**2)+8*(r**3)-4*(r**4))/((r-(r**2))**0.5)-(3/2)*(1-2*r)*(((np.pi)/2)-np.arcsin(temp))
     k=(6*L)/N
-    
+
+    region1=(x<r)
+    region2=(x>=r)
+    yc=np.zeros_like(x)
+    dyc_dx=np.zeros_like(x)
+
+    yc[region1]=(k/6)*((x[region1]**3)-3*r*(x[region1]**2)+(r**2)*(3-r)*x[region1])
+    dyc_dx[region1]=(k/6)*(3*(x[region1]**2)-6*r*x[region1]+(r**2)*(3-r))
+
+    yc[region2]=((k*(r**3))/6)*(1-x[region2])
+    dyc_dx[region2]=(-1*k*(r**3))/6
+
+    theta=np.arctan(dyc_dx)
+
+    xu=x-yt*np.sin(theta)
+    yu=yc+yt*np.cos(theta)
+
+    xl=x+yt*np.sin(theta)
+    yl=yc-yt*np.cos(theta)
+
 
 fig, ax=plt.subplots()
 ax.set_xlabel('Chord')
