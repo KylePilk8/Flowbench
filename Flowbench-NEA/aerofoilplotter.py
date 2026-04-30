@@ -2,7 +2,6 @@ from dependecies import *
 x=np.linspace(0,1,1000)
 z=np.linspace(-1,2,10)
 
-
 NACA=list(input())
 
 if len(NACA)==4:
@@ -51,18 +50,31 @@ elif len(NACA)==5:
     r=float(mp.findroot(f,0.2))
     temp=(1-2*r)
     N=(3*r-7*(r**2)+8*(r**3)-4*(r**4))/((r-(r**2))**0.5)-(3/2)*(1-2*r)*(((np.pi)/2)-np.arcsin(temp))
-    k=(6*L)/N
+    k1=(6*L)/N
+    k2=k1*((3*(r-P)**2)-(r**3))/((1-r)**3)
 
     region1=(x<r)
     region2=(x>=r)
     yc=np.zeros_like(x)
     dyc_dx=np.zeros_like(x)
 
-    yc[region1]=(k/6)*((x[region1]**3)-3*r*(x[region1]**2)+(r**2)*(3-r)*x[region1])
-    dyc_dx[region1]=(k/6)*(3*(x[region1]**2)-6*r*x[region1]+(r**2)*(3-r))
+    if S==0:
+        yc[region1]=(k1/6)*((x[region1]**3)-3*r*(x[region1]**2)+(r**2)*(3-r)*x[region1])
+        dyc_dx[region1]=(k1/6)*(3*(x[region1]**2)-6*r*x[region1]+(r**2)*(3-r))
 
-    yc[region2]=((k*(r**3))/6)*(1-x[region2])
-    dyc_dx[region2]=(-1*k*(r**3))/6
+        yc[region2]=((k1*(r**3))/6)*(1-x[region2])
+        dyc_dx[region2]=(-1*k1*(r**3))/6
+    
+    elif S==1:
+        
+        yc[region1]=(k1/6)*(((x[region1]-r)**3)-(k2/k1)*((1-r)**3)*x[region1]-(r**3)*x[region1]+(r**3))
+        dyc_dx[region1]=(k1/6)*(3*((x[region1]-r)**2)-(k2/k1)*((1-r)**3)-(r**3))
+        
+        yc[region2]=(k1/6)*((k2/k1)*((x[region2]-r)**3)-(k2/k1)*((1-r)**3)*x[region2]-(r**3)*x[region2]+(r**3))
+        dyc_dx[region2]=(k1/6)*(3*(k2/k1)*((x[region2]-r)**2)-(k2/k1)*((1-r)**3)-(r**3))
+    else:
+        print(0)
+        breakpoint
 
     theta=np.arctan(dyc_dx)
 
@@ -82,7 +94,7 @@ ax.plot(xl,yl)
 ax.plot(x,yc,label="MCL")
 ax.plot(z,z*0,color="black")
 
-ax.set_ylim(-0.55,0.55)
+ax.set_ylim(-0.2-t,0.2+t)
 ax.set_xlim(-0.05,1.05)
 plt.show()
 
