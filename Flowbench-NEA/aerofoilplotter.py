@@ -82,7 +82,7 @@ ax.plot(xl,yl)
 ax.plot(x,yc,label="MCL")
 ax.plot(z,z*0,color="black")
 
-ax.set_ylim(-t-(t*0.2),t+(t*0.2))
+ax.set_ylim(-0.55,0.55)
 ax.set_xlim(-0.05,1.05)
 plt.show()
 
