@@ -97,4 +97,3 @@ ax.plot(z,z*0,color="black")
 ax.set_ylim(-0.2-t,0.2+t)
 ax.set_xlim(-0.05,1.05)
 plt.show()
-
