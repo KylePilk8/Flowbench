@@ -1,5 +1,5 @@
 import aerofoilplotter
 from dependecies import *
-p1=multiprocessing.Process(target=aerofoilplotter.plotFoil("25013",0))
+p1=multiprocessing.Process(target=aerofoilplotter.plotFoil("",0))
 
 

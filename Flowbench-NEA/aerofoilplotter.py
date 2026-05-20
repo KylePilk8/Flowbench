@@ -3,6 +3,11 @@ from dependecies import *
 def plotFoil(NACA,scale):
     x=np.linspace(0,1,1000)
     z=np.linspace(-1,2,10)
+    
+    if not(NACA.isdigit()):
+          print("NACA code unplotable")
+          return False
+          breakpoint
 
     if len(NACA)==4:
         m=(int(NACA[0]))/100
@@ -19,6 +24,10 @@ def plotFoil(NACA,scale):
             yl=-yt
             yc=x*0
         else:
+            if p==0:
+                print("Second value out of range")
+                return False
+                breakpoint
             region1=x<p
             region2=x>=p
             yc=np.zeros_like(x)
@@ -45,6 +54,15 @@ def plotFoil(NACA,scale):
         S=int(NACA[2])
         t=(int(NACA[3]+NACA[4]))/100
 
+        if P==0 or P==0.45:
+            print("Second value out of range")
+            return False
+            breakpoint
+        if not(S==1 or S==0):
+            print("Third value out of range")
+            return False
+            breakpoint
+        
         yt = 5 * t * (0.2969 * np.sqrt(x)- 0.1260 * x - 0.3516 * x**2 + 0.2843 * x**3 - 0.1015 * x**4)
         f=lambda r: r*(1-((r/3)**(1/2)))-P
         r=float(mp.findroot(f,0.2))
@@ -83,7 +101,10 @@ def plotFoil(NACA,scale):
 
         xl=x+yt*np.sin(theta)
         yl=yc-yt*np.cos(theta)
-
+    else:
+        print("NACA code unplotable")
+        return False
+        breakpoint
 
     fig, ax=plt.subplots()
     ax.set_xlabel('Chord')
