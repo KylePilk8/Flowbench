@@ -6,7 +6,7 @@ def plotFoil(NACA,scale):
     
     if not(NACA.isdigit()):
           print("NACA code unplotable")
-          return False
+          return ("NACA code unplotable")
           breakpoint
 
     if len(NACA)==4:
@@ -26,7 +26,7 @@ def plotFoil(NACA,scale):
         else:
             if p==0:
                 print("Second value out of range")
-                return False
+                return ("Second value out of range")
                 breakpoint
             region1=x<p
             region2=x>=p
@@ -56,11 +56,11 @@ def plotFoil(NACA,scale):
 
         if P==0 or P==0.45:
             print("Second value out of range")
-            return False
+            return ("Second value out of range")
             breakpoint
         if not(S==1 or S==0):
             print("Third value out of range")
-            return False
+            return ("Third value out of range")
             breakpoint
         
         yt = 5 * t * (0.2969 * np.sqrt(x)- 0.1260 * x - 0.3516 * x**2 + 0.2843 * x**3 - 0.1015 * x**4)
@@ -103,7 +103,7 @@ def plotFoil(NACA,scale):
         yl=yc-yt*np.cos(theta)
     else:
         print("NACA code unplotable")
-        return False
+        return ("NACA code unplotable")
         breakpoint
 
     fig, ax=plt.subplots()
