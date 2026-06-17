@@ -16,7 +16,7 @@ class MainWindow(QWidget):
         layout.addWidget(self.input_box)
 
         self.input_box2=QLineEdit()
-        self.input_box2.setPlaceholderText("Enter scale or 0")
+        self.input_box2.setPlaceholderText("Enter scale or nothing for autoscale")
         layout.addWidget(self.input_box2)
 
         # Button
