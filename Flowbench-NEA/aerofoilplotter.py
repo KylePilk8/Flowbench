@@ -1,8 +1,14 @@
 from dependecies import *
 
-def plotFoil(NACA,scale):
+def plotFoil(NACA,scaley,scalex,AOA):
     x=np.linspace(0,1,1000)
     z=np.linspace(-1,2,10)
+    AOA=AOA*np.pi/180
+
+    if AOA<-np.pi/2 or AOA>np.pi/2:
+        print("AOA out of range")
+        return ("AOA out of range")
+        breakpoint
     
     if not(NACA.isdigit()):
           print("NACA code unplotable")
@@ -17,12 +23,12 @@ def plotFoil(NACA,scale):
 
         yt = 5 * t * (0.2969 * np.sqrt(x)- 0.1260 * x - 0.3516 * x**2 + 0.2843 * x**3 - 0.1015 * x**4)
         yt[999]=0
-        if m==0 and p==0:
-            xu=x
-            xl=x
-            yu=yt
-            yl=-yt
-            yc=x*0
+        if m == 0 and p == 0:
+            xu = x.copy()
+            xl = x.copy()
+            yu = yt.copy()
+            yl = -yt
+            yc = np.zeros_like(x)
         else:
             if p==0:
                 print("Second value out of range")
@@ -106,6 +112,23 @@ def plotFoil(NACA,scale):
         return ("NACA code unplotable")
         breakpoint
 
+    xuorignal=np.copy(xu)
+    yuoriginal=np.copy(yu)
+    xloriginal=np.copy(xl)
+    yloriginal=np.copy(yl)
+    xoriginal=np.copy(x)
+    yccoriginal=np.copy(yc)
+
+    for i in range(len(x)):
+        xu[i]=(xuorignal[i]-0.5)*np.cos(AOA)+yuoriginal[i]*np.sin(AOA)+0.5
+        yu[i]=-(xuorignal[i]-0.5)*np.sin(AOA)+yuoriginal[i]*np.cos(AOA)
+
+        xl[i]=(xloriginal[i]-0.5)*np.cos(AOA)+yloriginal[i]*np.sin(AOA)+0.5
+        yl[i]=-(xloriginal[i]-0.5)*np.sin(AOA)+yloriginal[i]*np.cos(AOA)
+
+        x[i]=(xoriginal[i]-0.5)*np.cos(AOA)+yccoriginal[i]*np.sin(AOA)+0.5
+        yc[i]=-(xoriginal[i]-0.5)*np.sin(AOA)+yccoriginal[i]*np.cos(AOA)
+
     fig, ax=plt.subplots()
     ax.set_xlabel('Chord')
     ax.set_ylabel('Thickness')
@@ -115,9 +138,12 @@ def plotFoil(NACA,scale):
     ax.plot(x,yc,label="MCL")
     ax.plot(z,z*0,color="black")
 
-    if scale==0:
-        ax.set_ylim(-0.2-t,0.2+t)
+    if scaley==0:
+        ax.set_ylim((min(yl)-0.05,max(yu)+0.05))
     else:
-        ax.set_ylim(-scale,scale)
-    ax.set_xlim(-0.05,1.05)
+        ax.set_ylim(-scaley,scaley)
+    if scalex==0:
+        ax.set_xlim((min(xl)-0.05,max(xu)+0.05))
+    else:
+        ax.set_xlim(-scalex,scalex)
     plt.show()

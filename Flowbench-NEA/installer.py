@@ -1,3 +1,6 @@
 import subprocess
 import sys
-subprocess.check_call([sys.executable, "-m", "pip", "install", "-r", "requirements.txt"])
+import os
+
+req_path = os.path.join(os.path.dirname(__file__), "requirements.txt")
+subprocess.check_call([sys.executable, "-m", "pip", "install", "-r", req_path])

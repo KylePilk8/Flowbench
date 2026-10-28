@@ -7,10 +7,9 @@ class MainWindow(QWidget):
 
         self.setWindowTitle("Aerofoil plotter")
 
-        # Layout
         layout = QVBoxLayout()
 
-        # Input field
+
         self.input_box = QLineEdit()
         self.input_box.setPlaceholderText("Enter NACA code")
         layout.addWidget(self.input_box)
@@ -19,12 +18,12 @@ class MainWindow(QWidget):
         self.input_box2.setPlaceholderText("Enter scale/nothing for auto")
         layout.addWidget(self.input_box2)
 
-        # Button
+    
         self.button = QPushButton("Submit")
         self.button.clicked.connect(self.on_button_click)
         layout.addWidget(self.button)
 
-        # Output label
+
         self.output_label = QLabel("")
         layout.addWidget(self.output_label)
 
@@ -37,7 +36,7 @@ class MainWindow(QWidget):
             scale=0
         scale=float(scale)
 
-        p1=multiprocessing.Process(target=aerofoilplotter.plotFoil(user_text,scale))
+        p1=multiprocessing.Process(target=aerofoilplotter.plotFoil(user_text,scale,0,60))
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
