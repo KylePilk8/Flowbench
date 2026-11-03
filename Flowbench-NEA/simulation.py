@@ -2,6 +2,104 @@ from dependecies import *
 import database
 import aerofoilplotter
 import simulationPlotter
+class MainWindow(QWidget):
+    def __init__(self):
+        super().__init__()
+
+        self.setWindowTitle("Simulation and Aerofoil Plotter")
+
+        layout = QVBoxLayout()
+
+
+        self.input_box = QLineEdit()
+        self.input_box.setPlaceholderText("Enter NACA code")
+        layout.addWidget(self.input_box)
+
+        self.input_box2=QLineEdit()
+        self.input_box2.setPlaceholderText("Enter scale y/nothing for auto")
+        layout.addWidget(self.input_box2)
+
+        self.input_box3=QLineEdit()
+        self.input_box3.setPlaceholderText("Enter scale x/nothing for auto")
+        layout.addWidget(self.input_box3)
+
+        self.input_box4=QLineEdit()
+        self.input_box4.setPlaceholderText("Enter AOA")
+        layout.addWidget(self.input_box4)
+
+        self.input_box5=QLineEdit()
+        self.input_box5.setPlaceholderText("Enter ID")
+        layout.addWidget(self.input_box5)
+
+        self.button = QPushButton("Plot Aerofoil")
+        self.button.clicked.connect(self.on_button_click)
+        layout.addWidget(self.button)
+
+        self.checkbox = QCheckBox("From ID")
+        self.checkbox.setTristate(False)  
+        self.checkbox.stateChanged.connect(self.on_state_changed)
+        layout.addWidget(self.checkbox)
+
+        self.output_label = QLabel("")
+        layout.addWidget(self.output_label)
+
+        self.setLayout(layout)
+
+    def on_state_changed(self, state):
+        if state == 2:
+            self.input_box.setDisabled(True)
+            self.input_box2.setDisabled(False)
+            self.input_box3.setDisabled(False)
+            self.input_box4.setDisabled(True)
+            self.input_box5.setDisabled(False)
+        elif state == 0:
+            self.input_box.setDisabled(False)
+            self.input_box2.setDisabled(False)
+            self.input_box3.setDisabled(False)
+            self.input_box4.setDisabled(False)
+            self.input_box5.setDisabled(True)
+
+    def on_button_click(self):
+        if self.checkbox.checkState() == 2:
+            aerofoil_id=self.input_box5.text()
+            connection=sqlite3.connect("flowbench.db")
+            cursor=connection.cursor()
+            cursor.execute("SELECT NACA FROM aerofoils WHERE id=?", (aerofoil_id,))
+            NACA=str(cursor.fetchone()[0])
+            cursor.execute("SELECT AOA FROM aerofoils WHERE id=?", (aerofoil_id,))
+            AOA=float(cursor.fetchone()[0])
+            scaley=(self.input_box2.text())
+            scalex=(self.input_box3.text())
+            if scalex=="":
+                scalex=0
+                scalex=float(scalex)
+            if scaley=="":
+                scaley=0
+                scaley=float(scaley)
+
+            p1=multiprocessing.Process(target=aerofoilplotter.plotFoil(NACA,scaley,scalex,AOA))
+            
+
+        if self.checkbox.checkState() == 0:
+            NACA=self.input_box.text()
+            scaley=(self.input_box2.text())
+            scalex=(self.input_box3.text())
+            AOA=(self.input_box4.text())
+            if scalex=="":
+                scalex=0
+            scalex=float(scalex)
+            if scaley=="":
+                scaley=0
+            scaley=float(scaley)
+            if AOA=="":
+                AOA=0 
+            AOA=float(AOA)
+            p1=multiprocessing.Process(target=aerofoilplotter.plotFoil(NACA,scaley,scalex,AOA))
+
+        
+
+
+
 
 class Aerofoil:
     def __init__(self,NACA,AOA):
@@ -9,7 +107,7 @@ class Aerofoil:
         self.AOA=AOA
 
     def plotAerofoil(self,scalex,scaley):
-        aerofoilplotter.plotFoil(self.NACA,scaley,self.AOA,scalex)
+        aerofoilplotter.plotFoil(self.NACA,scaley,scalex,self.AOA)
 
     def saveAerofoil(self,userid):
         database.addAerofoil(userid,self.NACA,self.AOA)
@@ -59,15 +157,8 @@ class Simulation:
 
 
 
-id=input("Enter aerofoil ID: ")
-conn = sqlite3.connect('aerofoils.db')
-cursor = conn.cursor()
-NACAcode = cursor.execute("SELECT NACAcode FROM aerofoils WHERE AerofoilID=?", (id,))
-AOA = cursor.execute("SELECT alpha FROM aerofoils WHERE AerofoilID=?", (id,))
-NACAcode = NACAcode.fetchone()[0]
-AOA = AOA.fetchone()[0]
-cursor.close()
-conn.close()
-
-aerofoil=Aerofoil(NACAcode, AOA)
-aerofoil.plotAerofoil(0,0)
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    window = MainWindow()
+    window.show()
+    sys.exit(app.exec())

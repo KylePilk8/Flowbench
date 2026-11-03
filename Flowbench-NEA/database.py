@@ -111,4 +111,3 @@ def deleteSimulation(simulation_id):
     conn.commit()
     conn.close()
 
-

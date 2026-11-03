@@ -5,7 +5,7 @@ class MainWindow(QWidget):
     def __init__(self):
         super().__init__()
 
-        self.setWindowTitle("Aerofoil plotter")
+        self.setWindowTitle("Home")
 
         layout = QVBoxLayout()
 

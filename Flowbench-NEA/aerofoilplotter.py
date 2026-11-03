@@ -139,7 +139,7 @@ def plotFoil(NACA,scaley,scalex,AOA):
     ax.plot(z,z*0,color="black")
 
     if scaley==0:
-        ax.set_ylim((min(yl)-0.05,max(yu)+0.05))
+        ax.set_ylim((min(yl)-0.1,max(yu)+0.1))
     else:
         ax.set_ylim(-scaley,scaley)
     if scalex==0:
