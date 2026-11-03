@@ -112,4 +112,3 @@ def deleteSimulation(simulation_id):
     conn.close()
 
 
-print(hashPassword("password123"))
