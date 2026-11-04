@@ -60,27 +60,26 @@ class MainWindow(QWidget):
             self.input_box5.setDisabled(True)
 
     def on_button_click(self):
-        if self.checkbox.checkState() == 2:
+        if self.checkbox.isChecked() == True:
             aerofoil_id=self.input_box5.text()
             connection=sqlite3.connect("flowbench.db")
             cursor=connection.cursor()
-            cursor.execute("SELECT NACA FROM aerofoils WHERE id=?", (aerofoil_id,))
+            cursor.execute("SELECT NACACode FROM aerofoils WHERE AerofoilID=?", (aerofoil_id,))
             NACA=str(cursor.fetchone()[0])
-            cursor.execute("SELECT AOA FROM aerofoils WHERE id=?", (aerofoil_id,))
+            cursor.execute("SELECT Alpha FROM aerofoils WHERE AerofoilID=?", (aerofoil_id,))
             AOA=float(cursor.fetchone()[0])
             scaley=(self.input_box2.text())
             scalex=(self.input_box3.text())
             if scalex=="":
                 scalex=0
-                scalex=float(scalex)
             if scaley=="":
                 scaley=0
-                scaley=float(scaley)
-
+            scaley=float(scaley)
+            scalex=float(scalex)
             p1=multiprocessing.Process(target=aerofoilplotter.plotFoil(NACA,scaley,scalex,AOA))
             
 
-        if self.checkbox.checkState() == 0:
+        if self.checkbox.isChecked() == False:
             NACA=self.input_box.text()
             scaley=(self.input_box2.text())
             scalex=(self.input_box3.text())

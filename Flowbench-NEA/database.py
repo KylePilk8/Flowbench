@@ -1,7 +1,7 @@
 from dependecies import *
 
 def createDatabase():
-    conn = sqlite3.connect('aerofoils.db')
+    conn = sqlite3.connect('flowbench.db')
     cursor = conn.cursor()
     cursor.execute('''CREATE TABLE IF NOT EXISTS users
                       (Userid INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -32,10 +32,10 @@ def createDatabase():
 
 def addUser(username,password):
     password = hashPassword(password)
-    if not username.isText() or not password.isText():
+    if not isinstance(username, str) or not isinstance(password, str):
         return("Data type error")
         breakpoint
-    conn = sqlite3.connect('aerofoils.db')
+    conn = sqlite3.connect('flowbench.db')
     cursor = conn.cursor()
     cursor.execute("INSERT INTO users (Username, Password, Type) VALUES (?, ?, ?)", (username, password, "user"))
     conn.commit()
@@ -53,11 +53,18 @@ def hashPassword(password):
     if hashkey==0:
         hashkey=1
   
-    for i in range(0,remaining):
-        hashkey2=abs(hashkey+((-1)**i * (ord(password[i])/length)))
-    if hashkey2==0:
-        hashkey2=1
-    
+    if remaining<=length:
+        for i in range(0,remaining):
+            hashkey2=abs(hashkey+((-1)**i * (ord(password[i])/length)))
+        if hashkey2==0:
+            hashkey2=1
+
+    if remaining>length:
+        for i in range(0,length):
+            hashkey2=abs(hashkey+((-1)**i * (ord(password[i])/length)))
+        if hashkey2==0:
+            hashkey2=1 
+           
     for i in range(0,length):
         hashed_password[i]=chr(int(161+(ord(password[i])*hashkey*(i+1))%128))
     for i in range(0,remaining):
@@ -70,20 +77,20 @@ def hashPassword(password):
 
 
 def addAerofoil(userid, naca_code, alpha):
-    if not userid.isInt() or not naca_code.isText() or not alpha.isFloat():
+    if not isinstance(userid, int) or not isinstance(naca_code, str) or not isinstance(alpha, float):
         return("Data type error")
         breakpoint
-    conn = sqlite3.connect('aerofoils.db')
+    conn = sqlite3.connect('flowbench.db')
     cursor = conn.cursor()
     cursor.execute("INSERT INTO aerofoils (Userid, NACAcode, alpha) VALUES (?, ?, ?)", (userid, naca_code, alpha))
     conn.commit()
     conn.close()
 
 def addSimulation(aerofoil_id, speed, fluid, temperature, altitude, advanced_mode, fluid_viscosity, fluid_density, control_mode):
-    if not aerofoil_id.isInt() or not speed.isFloat() or not fluid.isText() or not temperature.isFloat() or not altitude.isFloat() or not advanced_mode.isBoolean() or not fluid_viscosity.isFloat() or not fluid_density.isFloat() or not control_mode.isBoolean():
+    if not isinstance(aerofoil_id, int) or not isinstance(speed, float) or not isinstance(fluid, str) or not isinstance(temperature, float) or not isinstance(altitude, float) or not isinstance(advanced_mode, bool) or not isinstance (fluid_viscosity, float) or not isinstance(fluid_density, float) or not isinstance(control_mode, bool):
         return("Data type error")
         breakpoint
-    conn = sqlite3.connect('aerofoils.db')
+    conn = sqlite3.connect('flowbench.db')
     cursor = conn.cursor()
     cursor.execute("INSERT INTO simulations (AerofoilID, Speed, Fluid, Temperature, Altitude, AdvancedMode, Fluidviscosity, Fluiddensity, Controlmode) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", 
                    (aerofoil_id, speed, fluid, temperature, altitude, advanced_mode, fluid_viscosity, fluid_density, control_mode))
@@ -91,23 +98,24 @@ def addSimulation(aerofoil_id, speed, fluid, temperature, altitude, advanced_mod
     conn.close()
 
 def deleteUser(userid):
-    conn = sqlite3.connect('aerofoils.db')
+    conn = sqlite3.connect('flowbench.db')
     cursor = conn.cursor()
     cursor.execute("DELETE FROM users WHERE Userid = ?", (userid,))
     conn.commit()
     conn.close()
 
 def deleteAerofoil(aerofoil_id):
-    conn = sqlite3.connect('aerofoils.db')
+    conn = sqlite3.connect('flowbench.db')
     cursor = conn.cursor()
     cursor.execute("DELETE FROM aerofoils WHERE AerofoilID = ?", (aerofoil_id,))
     conn.commit()
     conn.close()
 
 def deleteSimulation(simulation_id):
-    conn = sqlite3.connect('aerofoils.db')
+    conn = sqlite3.connect('flowbench.db')
     cursor = conn.cursor()
     cursor.execute("DELETE FROM simulations WHERE SimulationID = ?", (simulation_id,))
     conn.commit()
     conn.close()
+
 
